@@ -1,0 +1,50 @@
+query LoadBalancerVIP($hostname: String!) {
+  ServerLoadBalancer(hostname__value: $hostname) {
+    edges {
+      node {
+        id
+        hostname {
+          value
+        }
+        asn {
+          node {
+            asn {value}
+          }
+        }
+        virtual_ips {
+          edges {
+            node {
+              ip_address {
+                node {
+                  address {
+                    ip
+                  }
+                }
+              }
+            }
+          }
+        }
+        public_ip_address {
+          node {
+            address  {
+              value
+            }
+            ip_prefix {
+              node {
+                ... on IpamIPPrefix {
+                  gateway {
+                    node {
+                      address  {
+                        ip
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

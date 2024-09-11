@@ -1,0 +1,65 @@
+# Global settings
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+    # SSL settings (required for HTTPS)
+    ssl-default-bind-ciphers PROFILE=SYSTEM
+    ssl-default-bind-options no-sslv3
+
+# Default settings
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    timeout connect 5s
+    timeout client  50s
+    timeout server  50s
+    retries 3
+    option redispatch
+    maxconn 3000
+
+{% for lb in data.ServerLoadBalancer.edges %}
+    # Load Balancer: {{ lb.node.hostname }}
+{%  for vip in lb.node.virtual_ips.edges %}
+{%      if vip.node.status.value == "active" %}
+        # Frontend for VIP: {{ vip.node.hostname.value }}
+        frontend vip_{{ vip.node.hostname.value }}_frontend
+{%          if vip.node.ssl_certificate.value %}
+                bind {{ vip.node.ip_address.node.address.ip }}:443 ssl crt /etc/haproxy/certs/{{ vip.node.ssl_certificate.value }}
+{%          else %}
+                bind {{ vip.node.ip_address.node.address.ip }}:80
+{%          endif %}
+            mode {{ vip.node.mode.value }}
+            option http-server-close
+            option forwardfor
+            log global
+            default_backend vip_{{ vip.node.hostname.value }}_backend
+
+        # Backend for VIP: {{ vip.node.hostname.value }}
+        backend vip_{{ vip.node.hostname.value }}_backend
+            mode {{ vip.node.mode.value }}
+            balance {{ vip.node.balance.value }}
+
+{%          for health_check in vip.node.health_checks.edges %}
+            option {{ health_check.node.check_type.value }}chk
+            rise {{ health_check.node.rise.value }}
+            fall {{ health_check.node.fall.value }}
+            timeout check {{ health_check.node.timeout.value }}ms
+{%          endfor %}
+{%      endif %}
+{%      for frontend in vip.node.frontend_servers.edges %}
+{%          if frontend.node.status.value == "active" %}
+            server {{ frontend.node.hostname.value }} {{ frontend.node.ip_address.node.address.ip }}:80 check
+{%          endif %}
+{%      endfor %}
+
+{%  endfor %}
+{% endfor %}

@@ -1,0 +1,9 @@
+---
+roles:
+
+collections:
+  # Install collections from Ansible Galaxy.
+  - name: ansible.netcommon
+  - name: ansible.utils
+  - name: opsmill.infrahub
+    version: 1.2.1

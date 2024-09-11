@@ -1,0 +1,37 @@
+query FrontendVIP($hostname: String!) {
+  ServerFrontend(hostname__value: $hostname) {
+    edges {
+      node {
+        id
+        hostname { value }
+        ip_address {
+          node {
+            address {
+              value
+              ip
+            }
+          }
+        }
+        virtual_ips {
+          edges {
+            node {
+              hostname { value }
+              status { value}
+              balance {value}
+              mode {value}
+              status { value}
+              ssl_certificate {value}
+              ip_address {
+                node {
+                  address {
+                    ip
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

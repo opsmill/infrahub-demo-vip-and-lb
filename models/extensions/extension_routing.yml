@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=https://schema.infrahub.app/infrahub/schema/latest.json
+---
+version: "1.0"
+
+nodes:
+  # --------------------  BGP (ASN, BGP Groups, BGP Sessions)  --------------------
+  - name: AutonomousSystem
+    namespace: Infra
+    description: "An Autonomous System (AS) is a set of Internet routable IP prefixes belonging to a network"
+    label: "Autonomous System"
+    icon: "mdi:bank-circle-outline"
+    default_filter: name__value
+    order_by: ["asn__value"]
+    display_labels:
+      - name__value
+      - asn__value
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+      - name: asn
+        kind: Number
+        unique: true
+        order_weight: 1100
+      - name: description
+        kind: Text
+        optional: true
+        order_weight: 1200
+    relationships:
+      - name: organization
+        peer: OrganizationGeneric
+        identifier: asn__organization
+        label: Owned by
+        cardinality: one
+        kind: Attribute
+        optional: false
+
+  # --------------------  VRF & Route Targets  --------------------
+  - name: VRF
+    namespace: Infra
+    description: "A VRF is isolated layer three domain"
+    label: "VRF"
+    icon: "mdi:router"
+    uniqueness_constraints:
+      - ["name__value"]
+    order_by:
+      - name__value
+    display_labels:
+      - name__value
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+      - name: description
+        kind: Text
+        optional: true
+        order_weight: 1100
+      - name: vrf_rd
+        label: Route Distinguisher
+        kind: Text
+        optional: true
+        order_weight: 1200
+    relationships:
+      - name: prefixes
+        label: Prefixes
+        peer: IpamIPPrefix
+        identifier: vrf__prefixes
+        optional: true
+        cardinality: many
+        kind: Generic
+      # - name: interfaces
+      #   label: Interfaces
+      #   peer: InterfaceLayer3
+      #   identifier: vrf__interfaces
+      #   optional: true
+      #   cardinality: many
+      #   kind: Generic
+      - name: location
+        peer: LocationGeneric
+        identifier: vrf__location
+        optional: true
+        cardinality: one
+        kind: Attribute
+
+extensions:
+  nodes:
+    # IPAM Extensions
+    - kind: IpamIPPrefix
+      relationships:
+        - name: vrf
+          label: "VRF"
+          identifier: vrf__prefixes
+          peer: InfraVRF
+          optional: true
+          cardinality: one
+          kind: Attribute
+
+    # Organization Extensions
+    - kind: OrganizationGeneric
+      relationships:
+        - name: asn
+          label: ASNs
+          identifier: asn__organization
+          peer: InfraAutonomousSystem
+          optional: true
+          cardinality: many
+          kind: Component
+          order_weight: 1900

@@ -1,0 +1,84 @@
+query ValidateLBVIPBackend {
+  ServerLoadBalancer {
+    edges {
+      node {
+        id
+        hostname { value }
+        environment { value }
+        ip_address {
+          node {
+            ... on IpamIPAddress {
+              ip_prefix {
+                node {
+                  ... on IpamIPPrefix {
+                    location {
+                      node {
+                        name { value }
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        virtual_ips {
+          edges {
+            node {
+              id
+              hostname {
+                value
+              }
+              ip_address {
+                node {
+                  ... on IpamIPAddress {
+                    ip_prefix {
+                      node {
+                        ... on IpamIPPrefix {
+                          location {
+                            node {
+                              name { value }
+                              id
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              frontend_servers {
+                edges {
+                  node {
+                    id
+                    hostname { value }
+                    environment { value }
+                    ip_address {
+                      node {
+                        ... on IpamIPAddress {
+                          ip_prefix {
+                            node {
+                              ... on IpamIPPrefix {
+                                location {
+                                  node {
+                                    name { value }
+                                    id
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

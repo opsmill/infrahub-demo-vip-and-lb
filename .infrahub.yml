@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://schema.infrahub.app/python-sdk/repository-config/latest.json
+---
+jinja2_transforms:
+  - name: "haproxy_config"
+    description: "Template to generate a Haproxy configuration"
+    query: "lb_vip"
+    template_path: "transforms/haproxy.conf.j2"
+
+  - name: "bird_config"
+    description: "Template to generate a Bird configuration"
+    query: "lb_asn"
+    template_path: "transforms/bird.conf.j2"
+
+  - name: "ngninx_config"
+    description: "Template to generate a Nginx configuration"
+    query: "frontend_vip"
+    template_path: "transforms/nginx.conf.j2"
+
+# python_transforms:
+
+
+artifact_definitions:
+  - name: "Configuration for Haproxy on LB"
+    artifact_name: "haproxy_config"
+    parameters:
+      hostname: "hostname__value"
+    content_type: "text/plain"
+    targets: "load_balancers"
+    transformation: "haproxy_config"
+
+  - name: "Configuration for Bird on LB"
+    artifact_name: "bird_config"
+    parameters:
+      hostname: "hostname__value"
+    content_type: "text/plain"
+    targets: "load_balancers"
+    transformation: "bird_config"
+
+  - name: "Configuration for Nginx on Front Servers"
+    artifact_name: "ngninx_config"
+    parameters:
+      hostname: "hostname__value"
+    content_type: "text/plain"
+    targets: "web_servers"
+    transformation: "ngninx_config"
+
+check_definitions:
+  - name: validate_env_for_lb_and_vip
+    class_name: InfrahubCheckLBVIPBackendLocationEnvironment
+    file_path: "checks/validate_lb_and_vip.py"
+
+# generator_definitions:
+
+queries:
+  - name: lb_vip
+    file_path: "transforms/lb_vip.gql"
+  - name: lb_asn
+    file_path: "transforms/lb_asn.gql"
+  - name: frontend_vip
+    file_path: "transforms/frontend_vip.gql"
+  - name: lb_and_vip_env
+    file_path: "checks/lb_and_vip_env.gql"

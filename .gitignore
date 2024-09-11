@@ -1,0 +1,6 @@
+**/*.tar.xz
+**/__pycache__
+**/.DS_Store
+.envrc
+.env
+configs/**playbooks/ansible.log

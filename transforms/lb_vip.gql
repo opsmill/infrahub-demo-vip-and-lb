@@ -1,0 +1,55 @@
+query LoadBalancerVIP($hostname: String!) {
+  ServerLoadBalancer(hostname__value: $hostname) {
+    edges {
+      node {
+        id
+        ip_address {
+          node {
+            address {value}
+          }
+        }
+        virtual_ips {
+          edges {
+            node {
+              hostname {value}
+              balance {value}
+              mode {value}
+              status { value}
+              ssl_certificate {value}
+              ip_address {
+                node {
+                  address {
+                    ip
+                  }
+                }
+              }
+              frontend_servers {
+                edges {
+                  node {
+                    hostname { value}
+                    status { value}
+                    ip_address {
+                      node {
+                        address {ip}
+                      }
+                    }
+                  }
+                }
+              }
+              health_checks {
+                edges {
+                  node {
+                    check_type {value}
+                    rise {value}
+                    fall {value}
+                    timeout {value}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

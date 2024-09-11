@@ -1,0 +1,33 @@
+- name: Query Haproxy artifact
+  hosts: lb_prod
+  connection: local
+  gather_facts: false
+
+  vars:
+    local_config_path: "{{ playbook_dir}}/../configs/{{ inventory_hostname }}haproxy.conf"
+
+  tasks:
+    - name: Query Artifact
+      opsmill.infrahub.artifact_fetch:
+        artifact_name: "Configuration for Haproxy on LB"
+        target_id: "{{ id }}"
+      register: artifact
+      tags:
+        - always
+
+    - name: Save configs to localhost
+      ansible.builtin.copy:
+        content: "{{ artifact.text }}"
+        dest: "{{ local_config_path }}"
+      tags:
+        - always
+
+    - name: Print result
+      ansible.builtin.debug:
+        msg: "{{ artifact }}"
+      tags:
+        - never
+        - debug
+
+    # TODO
+    # Push to server and reload haproxy services

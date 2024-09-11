@@ -1,0 +1,177 @@
+# yaml-language-server: $schema=https://schema.infrahub.app/infrahub/schema/latest.json
+---
+version: "1.0"
+
+generics:
+  - name: Generic
+    namespace: Location
+    description: "Generic Location."
+    label: "Locations"
+    icon: "mingcute:location-line"
+    include_in_menu: true
+    hierarchical: true
+    order_by:
+      - name__value
+    display_labels:
+      - name__value
+    attributes:
+      - name: name
+        kind: Text
+        order_weight: 1000
+      - name: shortname
+        kind: Text
+        order_weight: 1050
+    relationships:
+      - name: tags
+        peer: BuiltinTag
+        kind: Attribute
+        optional: true
+        cardinality: many
+        order_weight: 2000
+
+nodes:
+  # --------------------  Locations  --------------------
+  - name: Country
+    namespace: Location
+    inherit_from: ["LocationGeneric"]
+    include_in_menu: false
+    menu_placement: "LocationGeneric"
+    label: Country
+    children: "LocationMetro"
+    icon: "gis:search-country"
+    default_filter: name__value
+    uniqueness_constraints:
+      - ["name__value"]
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+        inherited: true
+
+  - name: Metro
+    namespace: Location
+    inherit_from: ["LocationGeneric"]
+    include_in_menu: false
+    icon: "healthicons:city"
+    menu_placement: "LocationGeneric"
+    label: Metro
+    parent: "LocationCountry"
+    children: "LocationSite"
+    default_filter: name__value
+    uniqueness_constraints:
+      - ["name__value"]
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+        inherited: true
+      - name: description
+        kind: Text
+        unique: false
+        optional: true
+        order_weight: 1100
+
+
+  - name: Site
+    namespace: Location
+    inherit_from: ["LocationGeneric"]
+    include_in_menu: false
+    icon: "ri:building-line"
+    menu_placement: "LocationGeneric"
+    label: Site
+    parent: "LocationMetro"
+    # children: "LocationRack"
+    default_filter: name__value
+    uniqueness_constraints:
+      - ["name__value"]
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+        inherited: true
+      - name: facility_id
+        kind: Text
+        unique: false
+        optional: True
+        order_weight: 1150
+      - name: gps_coordinates
+        label: GPS Coordinates
+        kind: Text
+        unique: false
+        optional: True
+        order_weight: 1400
+      - name: physical_address
+        kind: Text
+        unique: false
+        optional: True
+        order_weight: 1500
+      - name: status
+        kind: Dropdown
+        choices:
+          - name: provisioning
+            label: Provisioning
+            description: "Site is being provisioned."
+            color: "#A9DFBF"  # light pastel green
+          - name: active
+            label: Active
+            description: "Site is active and operational."
+            color: "#A9CCE3"  # pastel blue
+          - name: maintenance
+            label: Maintenance
+            description: "Site is under maintenance."
+            color: "#FFF2CC"  # pastel yellow
+          - name: disabled
+            label: Disabled
+            description: "Site has been disabled."
+            color: "#D3D3D3"  # light grey
+        order_weight: 1200
+      - name: site_type
+        kind: Dropdown
+        choices:
+          - name: dc
+            label: DC
+            description: "External Datacenter"
+            color: "#E6E6FA"  # lavender
+          - name: pop
+            label: POP
+            description: "Internal Datacenter (by Duff)"
+            color: "#E6E6FA"  # lavender
+        order_weight: 1300
+    relationships:
+      - name: owner
+        peer: OrganizationGeneric
+        identifier: owner__locations
+        optional: true
+        cardinality: one
+        order_weight: 1800
+      - name: provider
+        peer: OrganizationProvider
+        identifier: provider__locations
+        optional: true
+        cardinality: one
+        order_weight: 1900
+
+extensions:
+  nodes:
+    # Organization Extensions
+    - kind: OrganizationProvider
+      relationships:
+        - name: locations
+          peer: LocationSite
+          label: "Provided Locations (Sites)"
+          identifier: provider__locations
+          cardinality: many
+          optional: true
+          order_weight: 2100
+    - kind: OrganizationGeneric
+      relationships:
+        - name: locations_owned
+          label: "Owned Locations (Sites)"
+          identifier: owner__locations
+          cardinality: many
+          optional: true
+          peer: LocationSite
+          order_weight: 2100

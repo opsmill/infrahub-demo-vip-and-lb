@@ -1,0 +1,22 @@
+# BIRD BGP Configuration
+
+{% for lb in data.ServerLoadBalancer.edges %}
+{%  if lb.node.asn.node %}
+# Load Balancer: {{ lb.node.hostname.value }}
+# ASN: {{ lb.node.asn.node.asn.value }}
+
+# BGP Session with Gateway {{ lb.node.public_ip_address.node.ip_prefix.node.gateway.node.address.ip }}
+protocol bgp lb_{{ lb.node.hostname.value }}_bgp {
+    local as {{ lb.node.asn.node.asn.value }};
+    neighbor {{ lb.node.public_ip_address.node.ip_prefix.node.gateway.node.address.ip }} as 33930;
+    description "BGP session for {{ lb.node.hostname.value }}";
+
+    # Announce the VIPs
+{%      if lb.node.virtual_ips.edges %}
+    ipv4 {
+        export where net ~ [ {% for vip in lb.node.virtual_ips.edges %}{{ vip.node.ip_address.node.address.ip }}{% if not loop.last %},{% endif %} {% endfor %}];
+    }
+}
+{%      endif %}
+{%  endif %}
+{% endfor %}

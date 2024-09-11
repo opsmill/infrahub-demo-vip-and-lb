@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=https://schema.infrahub.app/infrahub/schema/latest.json
+---
+version: "1.0"
+
+generics:
+  - name: Generic
+    namespace: Organization
+    label: "Organizations"
+    description: An organization represent a legal entity, a company.
+    icon: mdi:domain
+    include_in_menu: true
+    hierarchical: True
+    uniqueness_constraints:
+      - ["name__value"]
+    order_by:
+      - name__value
+    display_labels:
+      - name__value
+    attributes:
+      - name: name
+        kind: Text
+        unique: true
+        order_weight: 1000
+      - name: description
+        kind: Text
+        optional: true
+        order_weight: 1200
+    relationships:
+      - name: tags
+        peer: BuiltinTag
+        cardinality: many
+        kind: Attribute
+        optional: true
+        order_weight: 3000
+
+nodes:
+  - name: Manufacturer
+    namespace: Organization
+    description: Device Manufacturer
+    icon: mdi:domain
+    inherit_from:
+      - OrganizationGeneric
+    include_in_menu: false
+    menu_placement: OrganizationGeneric
+    parent: ""
+    children: ""
+
+  - name: Provider
+    namespace: Organization
+    description: Telecom or Datacenter Provider
+    icon: mdi:domain
+    inherit_from:
+      - OrganizationGeneric
+    include_in_menu: false
+    menu_placement: OrganizationGeneric
+    parent: ""
+    children: ""
+
+  - name: Tenant
+    namespace: Organization
+    description: Customer
+    icon: mdi:domain
+    inherit_from:
+      - OrganizationGeneric
+    include_in_menu: false
+    menu_placement: OrganizationGeneric
+    parent: ""
+    children: ""

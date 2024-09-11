@@ -1,0 +1,42 @@
+---
+### infrahub_inventory.yml file in YAML format
+### opsmill.infrahub.inventory plugin is able to do a lookup for ENV vars: INFRAHUB_API_TOKEN and INFRAHUB_ADDRESS
+
+plugin: opsmill.infrahub.inventory
+
+api_endpoint: "http://localhost:8000"
+token: "{{ lookup('ansible.builtin.env', 'INFRAHUB_API_TOKEN') }}"
+
+timeout: 30
+strict: false
+
+nodes:
+  ServerFrontend:
+    include:
+      - hostname
+      - environment
+      - status
+  ServerLoadBalancer:
+    include:
+      - hostname
+      - environment
+      - status
+
+
+compose:
+  ansible_host: hostname
+
+keyed_groups:
+  - prefix: ""
+    separator: ""
+    key: status
+  - prefix: "env"
+    key: environment
+
+groups:
+  # ER Groups
+  itx7_dev: "'itx7' in hostname and 'development' in environment"
+  itx7_prod: "'itx7' in hostname and 'production' in environment"
+  lb_prod: "'lb' in hostname and 'production' in environment"
+  front_all: "'frontend' in hostname and 'production' in environment"
+  front_prod: "'frontend' in hostname and 'production' in environment"
