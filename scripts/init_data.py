@@ -96,7 +96,7 @@ PREFIXES = [
     {"prefix": "203.0.112.0/22", "location": None, "role": "supernet", "vrf": "Internet"},
     {"prefix": "203.0.112.0/24", "location": "EQX2.FRA.DE", "role": "public", "vrf": "Internet"},
     {"prefix": "203.0.113.0/24", "location": "ITX7.PAR.FR", "role": "public", "vrf": "Internet"},
-    {"prefix": "203.0.113.0/24", "location": "ITX9.ASM.NL", "role": "public", "vrf": "Internet"},
+    {"prefix": "203.0.113.0/24", "location": "ITX9.AMS.NL", "role": "public", "vrf": "Internet"},
     # Private
     {"prefix": "10.100.0.0/14", "location": None, "role": "supernet", "vrf": None},
     {"prefix": "10.101.0.0/16", "location": "EQX2.FRA.DE", "role": "supernet", "vrf": None},
@@ -107,10 +107,10 @@ PREFIXES = [
     {"prefix": "10.102.0.0/24", "location": "ITX7.PAR.FR", "role": "dmz", "vrf": "DMZ"},
     {"prefix": "10.102.1.0/24", "location": "ITX7.PAR.FR", "role": "server", "vrf": "Production"},
     {"prefix": "10.102.2.0/24", "location": "ITX7.PAR.FR", "role": "server", "vrf": "Development"},
-    {"prefix": "10.103.0.0/16", "location": "ITX9.ASM.NL", "role": "supernet", "vrf": None},
-    {"prefix": "10.103.0.0/24", "location": "ITX9.ASM.NL", "role": "dmz", "vrf": "DMZ"},
-    {"prefix": "10.103.1.0/24", "location": "ITX9.ASM.NL", "role": "server", "vrf": "Production"},
-    {"prefix": "10.103.2.0/24", "location": "ITX9.ASM.NL", "role": "server", "vrf": "Development"},
+    {"prefix": "10.103.0.0/16", "location": "ITX9.AMS.NL", "role": "supernet", "vrf": None},
+    {"prefix": "10.103.0.0/24", "location": "ITX9.AMS.NL", "role": "dmz", "vrf": "DMZ"},
+    {"prefix": "10.103.1.0/24", "location": "ITX9.AMS.NL", "role": "server", "vrf": "Production"},
+    {"prefix": "10.103.2.0/24", "location": "ITX9.AMS.NL", "role": "server", "vrf": "Development"},
 ]
 
 
@@ -437,7 +437,10 @@ async def run(client: InfrahubClient, log: logging.Logger, branch: str, **kwargs
             "status": {"value": pfx_status},
         }
         if pfx_location:
-            pfx_data["location"] = client.store.get(kind="LocationSite", key=f"{pfx_location}", raise_when_missing=False).id
+            location_obj = client.store.get(kind="LocationSite", key=f"{pfx_location}", raise_when_missing=False)
+            if location_obj:
+                pfx_data["location"] = location_obj.id
+
         if pfx_role == "supernet":
             pfx_data["member_type"] = "prefix"
 
