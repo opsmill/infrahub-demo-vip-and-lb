@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "infrahub-demo-dc-fabric"
+name = "infrahub-demo-vip-and-lb"
 version = "0.1.0"
 description = ""
 authors = ["OpsMill <info@opsmill.com>"]
