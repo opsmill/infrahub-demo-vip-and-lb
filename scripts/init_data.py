@@ -3,9 +3,11 @@ import logging
 
 from typing import Dict, List, Optional
 
-from infrahub_sdk import InfrahubClient, InfrahubNode, NodeStore
+from infrahub_sdk import InfrahubClient
 from infrahub_sdk.batch import InfrahubBatch
 from infrahub_sdk.exceptions import GraphQLError
+from infrahub_sdk.node import InfrahubNode
+from infrahub_sdk.store import NodeStore
 
 # flake8: noqa
 # pylint: skip-file
@@ -96,7 +98,7 @@ PREFIXES = [
     {"prefix": "203.0.112.0/22", "location": None, "role": "supernet", "vrf": "Internet"},
     {"prefix": "203.0.112.0/24", "location": "EQX2.FRA.DE", "role": "public", "vrf": "Internet"},
     {"prefix": "203.0.113.0/24", "location": "ITX7.PAR.FR", "role": "public", "vrf": "Internet"},
-    {"prefix": "203.0.113.0/24", "location": "ITX9.AMS.NL", "role": "public", "vrf": "Internet"},
+    {"prefix": "203.0.114.0/24", "location": "ITX9.AMS.NL", "role": "public", "vrf": "Internet"},
     # Private
     {"prefix": "10.100.0.0/14", "location": None, "role": "supernet", "vrf": None},
     {"prefix": "10.101.0.0/16", "location": "EQX2.FRA.DE", "role": "supernet", "vrf": None},
