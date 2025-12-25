@@ -10,11 +10,11 @@
 - **Version Control**: Natively integrated into the graph database which opens up some new capabilities like branching, diffing, and merging data directly in the database.
 - **Unified Storage**: By combining a graph database and git, Infrahub stores data and code needed to manage the infrastructure.
 
-## Infrahub - Demo repository for Load Balancer & VIP
+## Infrahub - Demo repository for Load Balancer & VIP (ARCHIVE)
 
-This repository is demoing the key Infrahub features for an example with servers, Load Balancer and VIP. Infrahub generates configurations that ansible deploys.
+This archived repository is an older demo showing an example with servers, Load Balancer and VIP. Infrahub generates configurations that ansible deploys. Please see the [Infrahub docs](https://docs.infrahub.app/) for up-to-date examples.
 
-You can run this demo on your pc using docker, or using Github Codespaces.
+---
 
 ## Running the demo on your pc
 
